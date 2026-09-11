@@ -555,7 +555,9 @@
             isPointerDown = false;
         });
 
-        // 移除旧的 mouse / touch 事件（防止重复触发）
+  
+  
+  
         // 注意：我们不再使用 mousedown/mouseup/touchstart/touchend，
         // 全部由 pointer 事件统一处理。
 
@@ -566,12 +568,12 @@
             back: { pos: new THREE.Vector3(0, 0.5, -12), target: new THREE.Vector3(0, 0.5, 0), ortho: true },
             left: { pos: new THREE.Vector3(-12, 0.5, 0), target: new THREE.Vector3(0, 0.5, 0), ortho: true },
             top: { pos: new THREE.Vector3(0, 12, 0.01), target: new THREE.Vector3(0, 0, 0), ortho: true },
-            standard: { pos: new THREE.Vector3(4, 4, 10), target: new THREE.Vector3(0, 0.5, 0), ortho: false },
+            standard: { pos: new THREE.Vector3(2.5, 3.2, 11.4), target: new THREE.Vector3(0, 0.5, 0), ortho: false },
         };
 
         let isAnimating = false;
         let animStartTime = 0;
-        const ANIM_DURATION = 600;
+        const ANIM_DURATION = 1800;  //动画时长
         let animStartPos = new THREE.Vector3();
         let animEndPos = new THREE.Vector3();
         let animStartTarget = new THREE.Vector3();
@@ -604,14 +606,16 @@
         function easeInOutCubic(t) {
             return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         }
-
+		//-------------解决标准视图切换会缩小
+		const ORTHO_SCALE = 0.85;   // 0.7~0.85 之间调节
+		
         function switchToOrtho() {
             if (isOrthoMode) return;
             const pos = activeCamera.position.clone();
             const target = controls.target.clone();
             const dist = pos.distanceTo(target);
             const fov = perspCamera.fov * Math.PI / 180;
-            const height = 2 * dist * Math.tan(fov / 2);
+            const height = 2 * dist * Math.tan(fov / 2)*ORTHO_SCALE; 
             const width = height * aspect;
             orthoCamera.left = -width / 2;
             orthoCamera.right = width / 2;
@@ -706,7 +710,7 @@
         }
 
         // ---------- 自动视角检测 ----------
-        const AUTO_ANGLE_THRESHOLD = 10 * Math.PI / 180;
+        const AUTO_ANGLE_THRESHOLD = 8 * Math.PI / 180;
         const AUTO_DIRECTIONS = {
             front: new THREE.Vector3(0, 0, 1),
             right: new THREE.Vector3(1, 0, 0),
